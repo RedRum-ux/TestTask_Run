@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
 using Wpf_Run.Models;
+using MessageBox = System.Windows.MessageBox;
 
 namespace Wpf_Run.Services
 {
@@ -36,9 +37,17 @@ namespace Wpf_Run.Services
             {
                 using (var reader = File.OpenText(file))
                 {
-                    var FileTExt = reader.ReadToEnd();
-                    _RunnersOne = JsonConvert.DeserializeObject<BindingList<RunnersDayData>>(FileTExt);
-                    _Files.Add(_RunnersOne);
+                    try
+                    {
+                        var FileTExt = reader.ReadToEnd();
+                        _RunnersOne = JsonConvert.DeserializeObject<BindingList<RunnersDayData>>(FileTExt);
+                        _Files.Add(_RunnersOne);
+                    }
+                    catch(Exception e)
+                    {
+                        MessageBox.Show(e.Message);
+                    }
+                  
                 }
             }
             
@@ -114,8 +123,15 @@ namespace Wpf_Run.Services
                     {
                         if(record.User == Object.User)
                         {
-                            contentsToWriteToFile = JsonConvert.SerializeObject(record);
-                            writer.WriteLine(contentsToWriteToFile);
+                            try
+                            {
+                                contentsToWriteToFile = JsonConvert.SerializeObject(record);
+                                writer.WriteLine(contentsToWriteToFile);
+                            }catch(Exception e)
+                            {
+                                MessageBox.Show(e.Message);
+                            }
+                            
                         }
                     }
                 }
@@ -131,17 +147,19 @@ namespace Wpf_Run.Services
             {
                 foreach (var record in file)
                 {
-                    if (min == 0)
-                        min = record.Steps;
-                    if (record.User == UserName.User)
-                    {
-                        count++;
-                        if (min > record.Steps)
+                        if (min == 0)
                             min = record.Steps;
-                        if (max < record.Steps)
-                            max = record.Steps;
-                        ponints.Add(new ObservablePoint(count,record.Steps));
-                    }
+                        if (record.User == UserName.User)
+                        {
+                            count++;
+                            if (min > record.Steps)
+                                min = record.Steps;
+                            if (max < record.Steps)
+                                max = record.Steps;
+                            ponints.Add(new ObservablePoint(count, record.Steps));
+                        }
+                   
+                    
                 }
             }
             return ponints;

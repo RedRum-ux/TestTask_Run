@@ -98,7 +98,15 @@ namespace Wpf_Run
             SeriesCollection.Clear();
             min = 0;
             max = 0;
-            Values = _viesmodeldata.GetChartValues(StapsGrid.SelectedItem as RunnersAllData,ref max,ref min);
+            try
+            {
+                Values = _viesmodeldata.GetChartValues(StapsGrid.SelectedItem as RunnersAllData, ref max, ref min);
+            }
+            catch(Exception t)
+            {
+                MessageBox.Show(t.Message);
+            }
+           
             SeriesCollection.Add(new LineSeries
             {
                 Title = "Динамика",
